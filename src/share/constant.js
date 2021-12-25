@@ -1,0 +1,1 @@
+export const imageUrl = "https://media-public.canva.cn/k2Xu0/MAEhC6k2Xu0/1/s2.png";

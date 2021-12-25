@@ -1,8 +1,6 @@
 # This is the milestone one
 
-This is the initial part of this task, which creates a react app by using:
-
-### `npx create-react-app my-milestones`
+In this task, I'm asked to create a front-end only React application that uses Canvas to draw a given image when the start button is clicked. In addition to that, when the button is not yet clicked, there should be a dot-dashed border that outlines the area of that Canvas with width 360px and height 640px.
 
 ## To launch this app
 
