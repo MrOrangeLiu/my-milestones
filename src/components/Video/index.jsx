@@ -9,16 +9,17 @@ const rndStyle = {
     alignItems: "center",
     justifyContent: "center",
     border: "solid 1px #ddd",
-    background: "transparent",
+    background: "transparent"
 };
 
 export default class Video extends Component {
 
     canvasRef = React.createRef()
+    cachedCanvasRef = React.createRef()
     videoRef = React.createRef()
     previewRef = React.createRef()
     state = {
-        isInit: true,
+        isInit: false,
         isPlaying: false,
         rndWidth: 200,
         rndHeight: 200,
@@ -33,8 +34,18 @@ export default class Video extends Component {
     componentDidUpdate(preProps, preState) {
         const canvas = this.canvasRef.current
         const ctx = canvas.getContext("2d")
+
+        // Define the width and height of the cached canvas
+        const cachedCtx = this.cachedCanvasRef.current.getContext("2d")
+        this.cachedCanvasRef.current.width = this.state.rndWidth
+        this.cachedCanvasRef.current.height = this.state.rndHeight
+
         if(this.shouldClearRect(preState)) {
             ctx.clearRect(preState.rndX,preState.rndY,preState.rndWidth,preState.rndHeight + 2)
+            
+            // Draw the cached frame immediately to prevent sparking
+            cachedCtx.drawImage(this.videoRef.current, 0, 0, this.state.rndWidth, this.state.rndHeight)
+            ctx.drawImage(this.cachedCanvasRef.current, this.state.rndX, this.state.rndY, this.state.rndWidth, this.state.rndHeight)
         }
         // Deal with the case when the video is paused
         if(!this.interval) {
@@ -90,9 +101,10 @@ export default class Video extends Component {
     onPlay = () => {
         const canvas = this.canvasRef.current
         const ctx = canvas.getContext("2d")
+
         this.interval = setInterval(() => {
             ctx.drawImage(this.videoRef.current, this.state.rndX, this.state.rndY, this.state.rndWidth, this.state.rndHeight)
-            this.createBottomLine(this.state.rndWidth, this.state.rndHeight, this.state.rndX, this.state.rndY);
+            // this.createBottomLine(this.state.rndWidth, this.state.rndHeight, this.state.rndX, this.state.rndY);
         }, 20);
     }
 
@@ -109,6 +121,7 @@ export default class Video extends Component {
 
     rndInit = (width, height, x, y) => {
         this.setState({
+            isInit: true,
             rndWidth: width,
             rndHeight: height,
             rndX: x,
@@ -123,8 +136,9 @@ export default class Video extends Component {
                     <div className="dragging-area"></div>
                     <div className="preview" ref={this.previewRef}></div>
                     <canvas ref={this.canvasRef} width="360" height="640"></canvas>
+                    <canvas className="cachedCanvasRef" ref={this.cachedCanvasRef} ></canvas>
                     <Rnd
-                        style={rndStyle}
+                        style={ {...rndStyle, visibility: !this.state.isInit ? 'hidden' : 'visible'} }
                         size={{ width: this.state.rndWidth, height: this.state.rndHeight }}
                         position={{ x: this.state.rndX, y: this.state.rndY }}
                         // onDragStop={(e, d) => {

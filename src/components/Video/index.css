@@ -4,6 +4,12 @@
     margin: 0 auto;
 }
 
+.canvas-area > .cachedCanvasRef {
+    position: absolute;
+    left: 0;
+    visibility: hidden;
+}
+
 .dragging-area {
     position: absolute;
     width: 358px;
