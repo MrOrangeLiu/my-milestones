@@ -11,3 +11,6 @@ In the project directory, you can run:
 and then:
 
 ### `npm start`
+
+# The Screenshots
+![Homepage](https://github.com/MrOrangeLiu/my-milestones/blob/milestone3/screenshots/screenshot1.png)
