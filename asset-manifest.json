@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/my-milestones/static/css/main.279f6881.css",
+    "main.js": "/my-milestones/static/js/main.1b292644.js",
+    "index.html": "/my-milestones/index.html",
+    "main.279f6881.css.map": "/my-milestones/static/css/main.279f6881.css.map",
+    "main.1b292644.js.map": "/my-milestones/static/js/main.1b292644.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.279f6881.css",
+    "static/js/main.1b292644.js"
+  ]
+}
