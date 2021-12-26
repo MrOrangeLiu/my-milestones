@@ -127,14 +127,25 @@ export default class Video extends Component {
                         style={rndStyle}
                         size={{ width: this.state.rndWidth, height: this.state.rndHeight }}
                         position={{ x: this.state.rndX, y: this.state.rndY }}
-                        onDragStop={(e, d) => {
+                        // onDragStop={(e, d) => {
+                        //     this.setState({ rndX: d.x, rndY: d.y })
+                        // }}
+                        onDrag={(e, d) => {
                             this.setState({ rndX: d.x, rndY: d.y })
                         }}
-                        onResizeStop={(e, direction, ref, delta, position) => {
+                        // onResizeStop={(e, direction, ref, delta, position) => {
+                        //     this.setState({
+                        //         rndWidth: ref.style.width.substring(0, ref.style.width.length - 2),
+                        //         rndHeight: ref.style.height.substring(0, ref.style.height.length - 2),
+                        //         ...position
+                        //     })
+                        // }}
+                        onResize={(e, direction, ref, delta, position) => {
                             this.setState({
                                 rndWidth: ref.style.width.substring(0, ref.style.width.length - 2),
                                 rndHeight: ref.style.height.substring(0, ref.style.height.length - 2),
-                                ...position
+                                rndX: position.x,
+                                rndY: position.y
                             })
                         }}
                         bounds=".dragging-area"
