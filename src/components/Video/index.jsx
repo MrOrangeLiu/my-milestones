@@ -1,18 +1,52 @@
 import React, { Component } from 'react'
 import Button from '@mui/material/Button'
+import { Rnd } from 'react-rnd'
 import { videoUrl } from '../../share/constant'
 import './index.css'
+
+const rndStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "solid 1px #ddd",
+    background: "transparent",
+};
 
 export default class Video extends Component {
 
     canvasRef = React.createRef()
     videoRef = React.createRef()
+    previewRef = React.createRef()
     state = {
-        isPlaying: false
+        isInit: true,
+        isPlaying: false,
+        rndWidth: 200,
+        rndHeight: 200,
+        rndX: 1,
+        rndY: 1
     }
 
     componentDidMount() {
         this.canvasInit()
+    }
+
+    componentDidUpdate(preProps, preState) {
+        const canvas = this.canvasRef.current
+        const ctx = canvas.getContext("2d")
+        if(this.shouldClearRect(preState)) {
+            ctx.clearRect(preState.rndX,preState.rndY,preState.rndWidth,preState.rndHeight + 2)
+        }
+        // Deal with the case when the video is paused
+        if(!this.interval) {
+            ctx.drawImage(this.videoRef.current, this.state.rndX, this.state.rndY, this.state.rndWidth, this.state.rndHeight)
+        }
+    }
+
+    // Judge if we need clear the rectangle of that video
+    shouldClearRect(preState) {
+        const { rndX, rndY, rndWidth, rndHeight } = this.state
+        const { rndX: preRndX, rndY: preRndY, rndWidth: preRndWidth, rndHeight: preRndHeight } = preState
+        return preRndX !== rndX || preRndY !== rndY || preRndWidth !== rndWidth || preRndHeight !== rndHeight
     }
 
     // Initialize the player
@@ -20,6 +54,7 @@ export default class Video extends Component {
         this.createBorder()
     }
 
+    // Create the border of the canvas
     createBorder = () => {
         const canvas = this.canvasRef.current
         const ctx = canvas.getContext("2d")
@@ -29,12 +64,13 @@ export default class Video extends Component {
         ctx.strokeRect(0,0,canvas.width,canvas.height) // Draw the border
     }
 
-    createBottomLine = () => {
+    // Create the bottom line of the video
+    createBottomLine = (width, height, x, y) => {
         const canvas = this.canvasRef.current
         const ctx = canvas.getContext("2d")
         ctx.beginPath()
-        ctx.moveTo((canvas.width - this.videoRef.current.clientWidth)/2, (canvas.height - this.videoRef.current.clientHeight)/2 + this.videoRef.current.clientHeight)
-        ctx.lineTo((canvas.width - this.videoRef.current.clientWidth)/2 + this.videoRef.current.clientWidth, (canvas.height - this.videoRef.current.clientHeight)/2 + this.videoRef.current.clientHeight)
+        ctx.moveTo(x, y + height)
+        ctx.lineTo(x + width, y + height)
         ctx.lineWidth = 2
         ctx.strokeStyle = 'red'
         ctx.setLineDash([])
@@ -52,24 +88,59 @@ export default class Video extends Component {
     }
 
     onPlay = () => {
+        const canvas = this.canvasRef.current
+        const ctx = canvas.getContext("2d")
         this.interval = setInterval(() => {
-            const canvas = this.canvasRef.current
-            const ctx = canvas.getContext("2d")
-            ctx.drawImage(this.videoRef.current, (canvas.width - this.videoRef.current.clientWidth)/2, (canvas.height - this.videoRef.current.clientHeight)/2)
-            this.createBottomLine();
+            ctx.drawImage(this.videoRef.current, this.state.rndX, this.state.rndY, this.state.rndWidth, this.state.rndHeight)
+            this.createBottomLine(this.state.rndWidth, this.state.rndHeight, this.state.rndX, this.state.rndY);
         }, 20);
     }
 
     onPause = () => {
         clearInterval(this.interval)
+        this.interval = null
+    }
+
+    // When the video is ready, then initialize the dragging box
+    onCanPlay = () => {
+        const canvas = this.canvasRef.current
+        this.rndInit(this.videoRef.current.clientWidth, this.videoRef.current.clientHeight, (canvas.width - this.videoRef.current.clientWidth)/2, (canvas.height - this.videoRef.current.clientHeight)/2)
+    }
+
+    rndInit = (width, height, x, y) => {
+        this.setState({
+            rndWidth: width,
+            rndHeight: height,
+            rndX: x,
+            rndY: y
+        })
     }
 
     render() {
         return (
             <div>
                 <div className="canvas-area">
+                    <div className="dragging-area"></div>
+                    <div className="preview" ref={this.previewRef}></div>
                     <canvas ref={this.canvasRef} width="360" height="640"></canvas>
-                    <video className="hiddenVideo" ref={this.videoRef} src={videoUrl} onPlay={this.onPlay} onPause={this.onPause}></video>
+                    <Rnd
+                        style={rndStyle}
+                        size={{ width: this.state.rndWidth, height: this.state.rndHeight }}
+                        position={{ x: this.state.rndX, y: this.state.rndY }}
+                        onDragStop={(e, d) => {
+                            this.setState({ rndX: d.x, rndY: d.y })
+                        }}
+                        onResizeStop={(e, direction, ref, delta, position) => {
+                            this.setState({
+                                rndWidth: ref.style.width.substring(0, ref.style.width.length - 2),
+                                rndHeight: ref.style.height.substring(0, ref.style.height.length - 2),
+                                ...position
+                            })
+                        }}
+                        bounds=".dragging-area"
+                    >
+                    </Rnd>
+                    <video className="hiddenVideo" ref={this.videoRef} src={videoUrl} onPlay={this.onPlay} onPause={this.onPause} onCanPlay={this.onCanPlay} ></video>
                 </div>
                 <div className="button-group">
                     <Button variant="contained" onClick={this.playOrPause}>{!this.state.isPlaying ? '播放' : '暂停'}</Button>

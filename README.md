@@ -1,6 +1,6 @@
-# This is the milestone two
+# This is the milestone three
 
-In this task, I'm asked to use Canvas to draw the given video with a 2px width red line under the video. To make the UI more pretty, MUI was used.
+In this task, I was asked to develop a resizable and draggable video component.
 
 ## To launch this app
 

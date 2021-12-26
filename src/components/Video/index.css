@@ -1,6 +1,15 @@
 .canvas-area {
+    position: relative;
     width: 360px;
     margin: 0 auto;
+}
+
+.dragging-area {
+    position: absolute;
+    width: 358px;
+    height: 638px;
+    top: 1px;
+    left: 1px;
 }
 
 .button-group {
