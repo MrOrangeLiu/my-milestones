@@ -1,0 +1,19 @@
+.canvas-area {
+    width: 360px;
+    margin: 0 auto;
+}
+
+.button-group {
+    text-align: center;
+}
+
+.button-group > button {
+    margin: 10px 0;
+}
+
+.hiddenVideo {
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    visibility: hidden;
+}
