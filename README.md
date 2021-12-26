@@ -13,4 +13,4 @@ and then:
 ### `npm start`
 
 # The Screenshots
-![Homepage](https://github.com/MrOrangeLiu/my-milestones/blob/milestone3/screenshots/screenshot1.png)
+<img src="https://github.com/MrOrangeLiu/my-milestones/blob/milestone3/screenshots/screenshot1.png" width="360" height="640" alt="screenshot1" /><br/>
