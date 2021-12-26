@@ -10,6 +10,14 @@
     visibility: hidden;
 }
 
+.canvas-area > .paper-wrapper {
+    position: absolute;
+    top: 0;
+    width: 360px;
+    height: 640px;
+    z-index: -1;
+}
+
 .dragging-area {
     position: absolute;
     width: 358px;

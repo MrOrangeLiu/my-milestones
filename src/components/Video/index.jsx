@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button'
 import { Rnd } from 'react-rnd'
 import { videoUrl } from '../../share/constant'
@@ -25,10 +26,6 @@ export default class Video extends Component {
         rndHeight: 200,
         rndX: 1,
         rndY: 1
-    }
-
-    componentDidMount() {
-        this.canvasInit()
     }
 
     componentDidUpdate(preProps, preState) {
@@ -58,21 +55,6 @@ export default class Video extends Component {
         const { rndX, rndY, rndWidth, rndHeight } = this.state
         const { rndX: preRndX, rndY: preRndY, rndWidth: preRndWidth, rndHeight: preRndHeight } = preState
         return preRndX !== rndX || preRndY !== rndY || preRndWidth !== rndWidth || preRndHeight !== rndHeight
-    }
-
-    // Initialize the player
-    canvasInit = () => {
-        this.createBorder()
-    }
-
-    // Create the border of the canvas
-    createBorder = () => {
-        const canvas = this.canvasRef.current
-        const ctx = canvas.getContext("2d")
-        ctx.lineWidth = 1 // Set border width
-        ctx.strokeStyle = "black" // Set border color
-        ctx.setLineDash([6,6]) // Set dot-dashed border style
-        ctx.strokeRect(0,0,canvas.width,canvas.height) // Draw the border
     }
 
     // Create the bottom line of the video
@@ -129,39 +111,34 @@ export default class Video extends Component {
         })
     }
 
+    onDragHandler = (e, d) => {
+        this.setState({ rndX: d.x, rndY: d.y })
+    }
+
+    onResizeHandler = (e, direction, ref, delta, position) => {
+        this.setState({
+            rndWidth: ref.style.width.substring(0, ref.style.width.length - 2),
+            rndHeight: ref.style.height.substring(0, ref.style.height.length - 2),
+            rndX: position.x,
+            rndY: position.y
+        })
+    }
+
     render() {
         return (
             <div>
                 <div className="canvas-area">
                     <div className="dragging-area"></div>
                     <div className="preview" ref={this.previewRef}></div>
+                    <Paper className="paper-wrapper" elevation={2} />
                     <canvas ref={this.canvasRef} width="360" height="640"></canvas>
                     <canvas className="cachedCanvasRef" ref={this.cachedCanvasRef} ></canvas>
                     <Rnd
                         style={ {...rndStyle, visibility: !this.state.isInit ? 'hidden' : 'visible'} }
                         size={{ width: this.state.rndWidth, height: this.state.rndHeight }}
                         position={{ x: this.state.rndX, y: this.state.rndY }}
-                        // onDragStop={(e, d) => {
-                        //     this.setState({ rndX: d.x, rndY: d.y })
-                        // }}
-                        onDrag={(e, d) => {
-                            this.setState({ rndX: d.x, rndY: d.y })
-                        }}
-                        // onResizeStop={(e, direction, ref, delta, position) => {
-                        //     this.setState({
-                        //         rndWidth: ref.style.width.substring(0, ref.style.width.length - 2),
-                        //         rndHeight: ref.style.height.substring(0, ref.style.height.length - 2),
-                        //         ...position
-                        //     })
-                        // }}
-                        onResize={(e, direction, ref, delta, position) => {
-                            this.setState({
-                                rndWidth: ref.style.width.substring(0, ref.style.width.length - 2),
-                                rndHeight: ref.style.height.substring(0, ref.style.height.length - 2),
-                                rndX: position.x,
-                                rndY: position.y
-                            })
-                        }}
+                        onDrag={this.onDragHandler}
+                        onResize={this.onResizeHandler}
                         bounds=".dragging-area"
                     >
                     </Rnd>
