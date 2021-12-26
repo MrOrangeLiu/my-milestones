@@ -3,6 +3,11 @@
     margin: 0 auto;
 }
 
+.canvas-area > canvas {
+    position: absolute;
+    top: 0;
+}
+
 .button-group {
     text-align: center;
 }

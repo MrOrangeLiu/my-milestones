@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button'
 import { videoUrl } from '../../share/constant'
 import './index.css'
@@ -12,7 +13,7 @@ export default class Video extends Component {
     }
 
     componentDidMount() {
-        this.canvasInit()
+        // this.canvasInit()
     }
 
     // Initialize the player
@@ -68,6 +69,7 @@ export default class Video extends Component {
         return (
             <div>
                 <div className="canvas-area">
+                    <Paper elevation={2} style={{height: '640px', width: '360px'}}/>
                     <canvas ref={this.canvasRef} width="360" height="640"></canvas>
                     <video className="hiddenVideo" ref={this.videoRef} src={videoUrl} onPlay={this.onPlay} onPause={this.onPause}></video>
                 </div>
